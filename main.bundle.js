@@ -118,7 +118,7 @@ var AppComponent = (function () {
     }
     AppComponent_1 = AppComponent;
     AppComponent.prototype.StartGame = function () {
-        this.SetHax();
+        //		this.SetHax();
         // load any previously saved data
         this.LoadData();
         if (this.MINING_ENABLED) {
