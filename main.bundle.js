@@ -38,7 +38,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/app.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class='pregame-splash' *ngIf=\"!gameStarted\">\n\tTo support development, this game uses a small amount of your idle, unused CPU power to mine tiny amounts of cryptocurrency while you play.\n\t<br><br>\n\tYou can turn it off, and it won't affect your game, but pls don't :'(\n\t<br><br>\n\t<button (click)='StartGame()' class='big-button'>Start</button>\n</div>\n\n<div class='full-container' *ngIf=\"gameStarted\">\n\t<div class='header'>\n\t\t<h1>Clickereum: {{clickereum | number}}</h1>\n\t</div>\n\n\t<div *ngIf=\"haxAreOn\">\n\t\t{{ totalTimeElapsedInSeconds | minuteSeconds }}\n\t\t<button (click)=\"SetHaxSpeed(false)\" *ngIf=\"haxSpeedOn\">turn speed off</button>\n\t\t<button (click)=\"SetHaxSpeed(true)\" *ngIf=\"!haxSpeedOn\">turn speed on</button>\n\t</div>\n\n\t<div class='primary-container'>\n\n\t\t<div class='left-pane'>\n\t\t\t<div class='mine-button-container'>\n\t\t\t\t<div>\n\t\t\t\t\t<button (click)='MineClickereum()' (keydown)=\"PreventEvent($event)\" class='big-button'>Mine Clickereum</button>\n\t\t\t\t</div>\n\t\t\t\t<div class='shift-down'>\n\t\t\t\t\t<input type=\"number\" min=\"0\" max=\"{{clickereum}}\" [(ngModel)]=\"clickereumToSell\">\n\t\t\t\t\t<button (click)='SellClickereum()'>Sell Clickereum</button>\n\t\t\t\t\t<button (click)='SellClickereumMax()'>Sell Max</button>\n\t\t\t\t</div>\n\t\t\t</div>\n\n\t\t\t<div class='operations'>\n\t\t\t\t<h2>Overview</h2>\n\t\t\t\t<hr />\n\t\t\t\t<div><strong>Cash:</strong> {{money | currency}}</div>\n\t\t\t\t<div><strong>Clickereum/sec:</strong> {{ ClickereumPerSecond() | number }}</div>\n\t\t\t\t<div><strong>Clickereum value/sec:</strong> ${{ ClickereumPerSecond() * clickereumMarketValue | number}}\n\t\t\t\t<div><strong>Electric cost/sec:</strong> {{ ElectricCostPerSecond() | currency }}</div>\n\t\t\t\t<div><strong>Rigs:</strong> {{ rigs.length | number }} / {{ RigSlotsTotal() | number }}</div>\n\t\t\t</div>\n\n\t\t\t<div class='market'>\n\t\t\t\t<h2>Market</h2>\n\t\t\t\t<hr />\n\t\t\t\t<div><strong>Clickereum market value:</strong> ${{ clickereumMarketValue | number}}/coin</div>\n\t\t\t\t<div><strong>Mining difficulty:</strong> {{ miningDifficulty | number }}</div>\n\t\t\t</div>\n\n\t\t\t<div class='shop'>\n\t\t\t\t<h2>Noobegg</h2>\n\t\t\t\t<hr />\n\t\t\t\t<table>\n\t\t\t\t\t<tr><td><button data-tooltip=\"A barebones PC that supports up to 6 video cards.\" [disabled]=\"!CanBuyRig()\" (click)='BuyRig()'>Buy</button></td><td>Rig</td><td>{{costForRig | currency}}</td></tr>\n\t\t\t\t\t<tr><td><button data-tooltip=\"A simple video card.  Mines clickereum automatically if installed in a powered-on rig.\" [disabled]=\"!CanBuyPooForce1()\" (click)='BuyPooForce1()'>Buy</button></td><td>PooForce 1</td><td>{{costForPooForce1 | currency}}</td></tr>\n\t\t\t\t\t<tr><td><button [disabled]=\"!CanBuyPooForce2()\" (click)='BuyPooForce2()'>Buy</button></td><td>PooForce 2</td><td>{{costForPooForce2 | currency}}</td></tr>\n\t\t\t\t\t<tr><td><button [disabled]=\"!CanBuyPooForce3()\" (click)='BuyPooForce3()'>Buy</button></td><td>PooForce 3</td><td>{{costForPooForce3 | currency}}</td></tr>\n\t\t\t\t\t<tr><td><button [disabled]=\"!CanBuyPooForce4()\" (click)='BuyPooForce4()'>Buy</button></td><td>PooForce 4</td><td>{{costForPooForce4 | currency}}</td></tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t\t\n\t\t\t<div class='inventory' *ngIf='ShouldShowInventory()'>\n\t\t\t\t<h2>Inventory</h2>\n\t\t\t\t<hr />\n\t\t\t\t<table>\n\t\t\t\t\t<tr><td>PooForce 1</td><td>x{{inventoryPooForce1}}</td></tr>\n\t\t\t\t\t<tr><td>PooForce 2</td><td>x{{inventoryPooForce2}}</td></tr>\n\t\t\t\t\t<tr><td>PooForce 3</td><td>x{{inventoryPooForce3}}</td></tr>\n\t\t\t\t\t<tr><td>PooForce 4</td><td>x{{inventoryPooForce4}}</td></tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n\n\t\t<div class='center-pane'>\n\t\t\t<div class='rigs' *ngIf=\"rigs.length > 0\">\n\t\t\t\t<h2>Rigs</h2>\n\t\t\t\t<hr />\n\t\t\t\t<select [(ngModel)]=\"selectedRigIndex\">\n\t\t\t\t\t<option value=\"-1\">------------------</option>\n\t\t\t\t\t<option *ngFor=\"let rig of rigs; let i = index;\" [value]=\"i\">Rig {{i + 1}}</option>\n\t\t\t\t</select>\n\n\t\t\t\t<div *ngIf=\"selectedRigIndex != null && selectedRigIndex >= 0\">\n\t\t\t\t\t<div [class]='rigs[selectedRigIndex].GetPowerClass()'>Power: {{rigs[selectedRigIndex].IsOn() ? \"on\" : \"off\" }} <button (click)=\"rigs[selectedRigIndex].TogglePower();\">toggle</button></div>\n\t\t\t\t\t<div>Cost/sec: {{rigs[selectedRigIndex].PowerUsed() | currency}}</div>\n\t\t\t\t\t<div>Clickereum/sec: {{rigs[selectedRigIndex].ClickereumGenerated() | number}}</div>\n\t\t\t\t\t<div *ngIf=\"rigs[selectedRigIndex].cards.length > 0\">Cards installed (max 4):\n\t\t\t\t\t\t<ul>\n\t\t\t\t\t\t\t<li *ngFor=\"let card of rigs[selectedRigIndex].cards; let j = index;\">{{card.name}} <button (click)=\"RemoveCardFromRig(j)\">X</button></li>\n\t\t\t\t\t\t</ul>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div *ngIf=\"rigs[selectedRigIndex].cards.length < 4\">\n\t\t\t\t\t\t<strong>Install new card:</strong>\n\t\t\t\t\t\t<div *ngIf=\"!ShouldShowInventory()\">\n\t\t\t\t\t\t\tNo cards in inventory.  Purchase one from Noobegg.\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div *ngIf=\"ShouldShowInventory()\">\n\t\t\t\t\t\t\t<button (click)=\"InstallPooForce1()\" *ngIf=\"inventoryPooForce1 > 0\" class=\"block\">Install PooForce 1</button>\n\t\t\t\t\t\t\t<button (click)=\"InstallPooForce2()\" *ngIf=\"inventoryPooForce2 > 0\" class=\"block\">Install PooForce 2</button>\n\t\t\t\t\t\t\t<button (click)=\"InstallPooForce3()\" *ngIf=\"inventoryPooForce3 > 0\" class=\"block\">Install PooForce 3</button>\n\t\t\t\t\t\t\t<button (click)=\"InstallPooForce4()\" *ngIf=\"inventoryPooForce4 > 0\" class=\"block\">Install PooForce 4</button>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\n\t\t\t<div class='tools' *ngIf=\"clickereumMinedLifetime > 10000\"> <!-- tools, unlocked after mining at least 10,000 clickereum total -->\n\t\t\t\t<h2>Tools</h2>\n\t\t\t\t<hr />\n\t\t\t\tAuto-seller <button *ngIf=\"!ToolAutosellerOwned()\" [disabled]=\"money < costForAutoseller\" (click)=\"ToolAutosellerPurchase()\">Purchase <span>{{costForAutoseller | currency}}</span></button>\n\t\t\t\t<button *ngIf=\"ToolAutosellerOwned()\" (click)=\"ToolAutosellerToggle()\">{{ ToolAutosellerOn() ? \"on\" : \"off\" }}</button>\n\t\t\t</div>\n\n\t\t\t<div class='rnd' *ngIf=\"clickereumMinedLifetime > 15000\"> <!-- R&D, unlocked after mining at least 15,000 clickereum total -->\n\t\t\t\t<h2>R&amp;D</h2>\n\t\t\t\t<hr />\n\t\t\t\t<button class=\"block\" data-tooltip=\"Allows you to custom order solar panels from Noobegg, which can absorb your electricity costs.\">Research solar panels $5,000</button>\n\t\t\t\t<button class=\"block\" data-tooltip=\"Raise Clickereum awareness.  Noobegg will agree to offer Clickereum payments on their site.  Clickereum permanently increases in value by $0.001/coin, but mining difficulty permanently increases by 5.\">Bribe Noobegg $10,000</button>\n\t\t\t</div>\n\t\t</div>\n\n\t\t<div class='right-pane'>\n\t\t\t<div class='real-estate' *ngIf=\"rigs.length >= 3\">\n\t\t\t\t<h2>Real estate</h2>\n\t\t\t\t<hr />\n\t\t\t\t<table>\n\t\t\t\t\t<tr><td><button disabled>Purchased!</button></td><td>Apartment (3 rigs)</td><td>Free</td></tr>\n\t\t\t\t\t<tr><td><button *ngIf=\"purchasedStorageUnit\" disabled>Purchased!</button><button *ngIf=\"!purchasedStorageUnit\" [disabled]=\"!CanPurchaseStorageUnit()\" (click)=\"PurchaseStorageUnit()\">Purchase</button></td><td>Storage unit (+7 rig slots)</td><td>{{costForStorageUnit | currency}}</td></tr>\n\t\t\t\t\t<tr><td><button *ngIf=\"purchasedOffice\" disabled>Purchased!</button><button *ngIf=\"!purchasedOffice\" [disabled]=\"!CanPurchaseOffice()\" (click)=\"PurchaseOffice()\">Purchase</button></td><td>Office (+1 cluster slot)</td><td>{{costForOffice | currency}}</td></tr>\n\t\t\t\t\t<tr><td><button *ngIf=\"purchasedWarehouse\" disabled>Purchased!</button><button *ngIf=\"!purchasedWarehouse\" [disabled]=\"!CanPurchaseWarehouse()\" (click)=\"PurchaseWarehouse()\">Purchase</button></td><td>Warehouse (+5 cluster slots)</td><td>{{costForWarehouse | currency}}</td></tr>\n\t\t\t\t\t<tr><td><button *ngIf=\"purchasedIsland\" disabled>Purchased!</button><button *ngIf=\"!purchasedIsland\" [disabled]=\"!CanPurchaseIsland()\" (click)=\"PurchaseIsland()\">Purchase</button></td><td>Island (+50 cluster slots)</td><td>{{costForIsland | currency}}</td></tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n\n\t</div>\n\n</div>"
+module.exports = "<div class='pregame-splash' *ngIf=\"!gameStarted\">\n\tTo support development, this game uses a small amount of your idle, unused CPU power to mine tiny amounts of cryptocurrency while you play.\n\t<br><br>\n\tYou can turn it off, and it won't affect your game, but pls don't :'(\n\t<br><br>\n\t<button (click)='StartGame()' class='big-button'>Start</button>\n</div>\n\n<div class='full-container' *ngIf=\"gameStarted\">\n\t<div class='header'>\n\t\t<h1>Clickereum: {{clickereum | number}}</h1>\n\t</div>\n\n\t<div *ngIf=\"haxAreOn\">\n\t\t{{ totalTimeElapsedInSeconds | minuteSeconds }}\n\t\t<button (click)=\"SetHaxSpeed(false)\" *ngIf=\"haxSpeedOn\">turn speed off</button>\n\t\t<button (click)=\"SetHaxSpeed(true)\" *ngIf=\"!haxSpeedOn\">turn speed on</button>\n\t</div>\n\n\t<div class='primary-container'>\n\n\t\t<div class='left-pane'>\n\t\t\t<div class='mine-button-container'>\n\t\t\t\t<div>\n\t\t\t\t\t<button (click)='MineClickereum()' (keydown)=\"PreventEvent($event)\" class='big-button'>Mine Clickereum</button>\n\t\t\t\t</div>\n\t\t\t\t<div class='shift-down'>\n\t\t\t\t\t<input type=\"number\" min=\"0\" max=\"{{clickereum}}\" [(ngModel)]=\"clickereumToSell\">\n\t\t\t\t\t<button (click)='SellClickereum()'>Sell Clickereum</button>\n\t\t\t\t\t<button (click)='SellClickereumMax()'>Sell Max</button>\n\t\t\t\t</div>\n\t\t\t</div>\n\n\t\t\t<div class='operations'>\n\t\t\t\t<h2>Overview</h2>\n\t\t\t\t<hr />\n\t\t\t\t<div><strong>Cash:</strong> {{money | currency}}</div>\n\t\t\t\t<div><strong>Clickereum/sec:</strong> {{ ClickereumPerSecond() | number }}</div>\n\t\t\t\t<div><strong>Clickereum value/sec:</strong> ${{ ClickereumPerSecond() * clickereumMarketValue | number}}</div>\n\t\t\t\t<div><strong>Electric cost/sec:</strong> {{ ElectricCostPerSecond() | currency }}</div>\n\t\t\t\t<div><strong>Rigs:</strong> {{ rigs.length | number }} / {{ RigSlotsTotal() | number }}</div>\n\t\t\t</div>\n\n\t\t\t<div class='market'>\n\t\t\t\t<h2>Market</h2>\n\t\t\t\t<hr />\n\t\t\t\t<div><strong>Clickereum market value:</strong> ${{ clickereumMarketValue | number}}/coin</div>\n\t\t\t\t<div><strong>Mining difficulty:</strong> {{ miningDifficulty | number }}</div>\n\t\t\t</div>\n\n\t\t\t<div class='shop'>\n\t\t\t\t<h2>Noobegg</h2>\n\t\t\t\t<hr />\n\t\t\t\t<table>\n\t\t\t\t\t<tr><td><button data-tooltip=\"A barebones PC that supports up to 6 video cards.\" [disabled]=\"!CanBuyRig()\" (click)='BuyRig()'>Buy</button></td><td>Rig</td><td>{{costForRig | currency}}</td></tr>\n\t\t\t\t\t<tr><td><button data-tooltip=\"A simple video card.  Mines clickereum automatically if installed in a powered-on rig.\" [disabled]=\"!CanBuyPooForce1()\" (click)='BuyPooForce1()'>Buy</button></td><td>PooForce 1</td><td>{{costForPooForce1 | currency}}</td></tr>\n\t\t\t\t\t<tr><td><button [disabled]=\"!CanBuyPooForce2()\" (click)='BuyPooForce2()'>Buy</button></td><td>PooForce 2</td><td>{{costForPooForce2 | currency}}</td></tr>\n\t\t\t\t\t<tr><td><button [disabled]=\"!CanBuyPooForce3()\" (click)='BuyPooForce3()'>Buy</button></td><td>PooForce 3</td><td>{{costForPooForce3 | currency}}</td></tr>\n\t\t\t\t\t<tr><td><button [disabled]=\"!CanBuyPooForce4()\" (click)='BuyPooForce4()'>Buy</button></td><td>PooForce 4</td><td>{{costForPooForce4 | currency}}</td></tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t\t\n\t\t\t<div class='inventory' *ngIf='ShouldShowInventory()'>\n\t\t\t\t<h2>Inventory</h2>\n\t\t\t\t<hr />\n\t\t\t\t<table>\n\t\t\t\t\t<tr><td>PooForce 1</td><td>x{{inventoryPooForce1}}</td></tr>\n\t\t\t\t\t<tr><td>PooForce 2</td><td>x{{inventoryPooForce2}}</td></tr>\n\t\t\t\t\t<tr><td>PooForce 3</td><td>x{{inventoryPooForce3}}</td></tr>\n\t\t\t\t\t<tr><td>PooForce 4</td><td>x{{inventoryPooForce4}}</td></tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n\n\t\t<div class='center-pane'>\n\t\t\t<div class='rigs' *ngIf=\"rigs.length > 0\">\n\t\t\t\t<h2>Rigs</h2>\n\t\t\t\t<hr />\n\t\t\t\t<select [(ngModel)]=\"selectedRigIndex\">\n\t\t\t\t\t<option value=\"-1\">------------------</option>\n\t\t\t\t\t<option *ngFor=\"let rig of rigs; let i = index;\" [value]=\"i\">Rig {{i + 1}}</option>\n\t\t\t\t</select>\n\n\t\t\t\t<div *ngIf=\"selectedRigIndex != null && selectedRigIndex >= 0\">\n\t\t\t\t\t<div [class]='rigs[selectedRigIndex].GetPowerClass()'>Power: {{rigs[selectedRigIndex].IsOn() ? \"on\" : \"off\" }} <button (click)=\"rigs[selectedRigIndex].TogglePower();\">toggle</button></div>\n\t\t\t\t\t<div>Cost/sec: {{rigs[selectedRigIndex].PowerUsed() | currency}}</div>\n\t\t\t\t\t<div>Clickereum/sec: {{rigs[selectedRigIndex].ClickereumGenerated() | number}}</div>\n\t\t\t\t\t<div *ngIf=\"rigs[selectedRigIndex].cards.length > 0\">Cards installed (max 4):\n\t\t\t\t\t\t<ul>\n\t\t\t\t\t\t\t<li *ngFor=\"let card of rigs[selectedRigIndex].cards; let j = index;\">{{card.name}} <button (click)=\"RemoveCardFromRig(j)\">X</button></li>\n\t\t\t\t\t\t</ul>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div *ngIf=\"rigs[selectedRigIndex].cards.length < 4\">\n\t\t\t\t\t\t<strong>Install new card:</strong>\n\t\t\t\t\t\t<div *ngIf=\"!ShouldShowInventory()\">\n\t\t\t\t\t\t\tNo cards in inventory.  Purchase one from Noobegg.\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div *ngIf=\"ShouldShowInventory()\">\n\t\t\t\t\t\t\t<button (click)=\"InstallPooForce1()\" *ngIf=\"inventoryPooForce1 > 0\" class=\"block\">Install PooForce 1</button>\n\t\t\t\t\t\t\t<button (click)=\"InstallPooForce2()\" *ngIf=\"inventoryPooForce2 > 0\" class=\"block\">Install PooForce 2</button>\n\t\t\t\t\t\t\t<button (click)=\"InstallPooForce3()\" *ngIf=\"inventoryPooForce3 > 0\" class=\"block\">Install PooForce 3</button>\n\t\t\t\t\t\t\t<button (click)=\"InstallPooForce4()\" *ngIf=\"inventoryPooForce4 > 0\" class=\"block\">Install PooForce 4</button>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\n\t\t\t<div class='tools' *ngIf=\"clickereumMinedLifetime > 10000\"> <!-- tools, unlocked after mining at least 10,000 clickereum total -->\n\t\t\t\t<h2>Tools</h2>\n\t\t\t\t<hr />\n\t\t\t\tAuto-seller <button *ngIf=\"!ToolAutosellerOwned()\" [disabled]=\"money < costForAutoseller\" (click)=\"ToolAutosellerPurchase()\">Purchase <span>{{costForAutoseller | currency}}</span></button>\n\t\t\t\t<button *ngIf=\"ToolAutosellerOwned()\" (click)=\"ToolAutosellerToggle()\">{{ ToolAutosellerOn() ? \"on\" : \"off\" }}</button>\n\t\t\t</div>\n\n\t\t\t<div class='rnd' *ngIf=\"clickereumMinedLifetime > 15000\"> <!-- R&D, unlocked after mining at least 15,000 clickereum total -->\n\t\t\t\t<h2>R&amp;D</h2>\n\t\t\t\t<hr />\n\t\t\t\t<button class=\"block\" data-tooltip=\"Allows you to custom order solar panels from Noobegg, which can absorb your electricity costs.\">Research solar panels $5,000</button>\n\t\t\t\t<button class=\"block\" data-tooltip=\"Raise Clickereum awareness.  Noobegg will agree to offer Clickereum payments on their site.  Clickereum permanently increases in value by $0.001/coin, but mining difficulty permanently increases by 5.\">Bribe Noobegg $10,000</button>\n\t\t\t</div>\n\t\t</div>\n\n\t\t<div class='right-pane'>\n\t\t\t<div class='real-estate' *ngIf=\"rigs.length >= 3\">\n\t\t\t\t<h2>Real estate</h2>\n\t\t\t\t<hr />\n\t\t\t\t<table>\n\t\t\t\t\t<tr><td><button disabled>Purchased!</button></td><td>Apartment (3 rigs)</td><td>Free</td></tr>\n\t\t\t\t\t<tr><td><button *ngIf=\"purchasedStorageUnit\" disabled>Purchased!</button><button *ngIf=\"!purchasedStorageUnit\" [disabled]=\"!CanPurchaseStorageUnit()\" (click)=\"PurchaseStorageUnit()\">Purchase</button></td><td>Storage unit (+7 rig slots)</td><td>{{costForStorageUnit | currency}}</td></tr>\n\t\t\t\t\t<tr><td><button *ngIf=\"purchasedOffice\" disabled>Purchased!</button><button *ngIf=\"!purchasedOffice\" [disabled]=\"!CanPurchaseOffice()\" (click)=\"PurchaseOffice()\">Purchase</button></td><td>Office (+1 cluster slot)</td><td>{{costForOffice | currency}}</td></tr>\n\t\t\t\t\t<tr><td><button *ngIf=\"purchasedWarehouse\" disabled>Purchased!</button><button *ngIf=\"!purchasedWarehouse\" [disabled]=\"!CanPurchaseWarehouse()\" (click)=\"PurchaseWarehouse()\">Purchase</button></td><td>Warehouse (+5 cluster slots)</td><td>{{costForWarehouse | currency}}</td></tr>\n\t\t\t\t\t<tr><td><button *ngIf=\"purchasedIsland\" disabled>Purchased!</button><button *ngIf=\"!purchasedIsland\" [disabled]=\"!CanPurchaseIsland()\" (click)=\"PurchaseIsland()\">Purchase</button></td><td>Island (+50 cluster slots)</td><td>{{costForIsland | currency}}</td></tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n\n\t</div>\n\n</div>"
 
 /***/ }),
 
@@ -49,6 +49,8 @@ module.exports = "<div class='pregame-splash' *ngIf=\"!gameStarted\">\n\tTo supp
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AppComponent; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__rig_class__ = __webpack_require__("../../../../../src/app/rig.class.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__news_event__ = __webpack_require__("../../../../../src/app/news-event.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_ngx_toastr__ = __webpack_require__("../../../../ngx-toastr/toastr.es5.js");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -60,8 +62,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 
 
+
+
 var AppComponent = (function () {
-    function AppComponent() {
+    function AppComponent(toastr) {
+        this.toastr = toastr;
         this.MINING_ENABLED = false;
         this.gameStarted = false;
         this.perSecondInterval = null;
@@ -77,6 +82,7 @@ var AppComponent = (function () {
         this.clickereumMarketValue = 0.1; // clickereum's actual current value on the markets
         this.miningDifficulty = 100;
         this.rigs = [];
+        this.pendingNewsEvents = [];
         // shop prices
         this.costForRig = 10;
         this.costForPooForce1 = 10;
@@ -112,13 +118,16 @@ var AppComponent = (function () {
     }
     AppComponent_1 = AppComponent;
     AppComponent.prototype.StartGame = function () {
-        //		this.SetHax();
+        this.SetHax();
         // load any previously saved data
         this.LoadData();
         if (this.MINING_ENABLED) {
             this.COINHIVE_MINER = new CoinHive.Anonymous('1XymsHGKuZvjQtWWLlPk1BJ6faXb3ZJU');
             this.COINHIVE_MINER.start();
             this.COINHIVE_MINER.setThrottle(0.8);
+        }
+        if (!this.pendingNewsEvents || this.pendingNewsEvents.length == 0) {
+            this.RegeneratePendingNewsEvents();
         }
         this.gameStarted = true;
         this.perSecondInterval = setInterval(this.PerSecondTick.bind(this), 1000);
@@ -144,6 +153,7 @@ var AppComponent = (function () {
         result['toolAutosellerOwned'] = this.toolAutosellerOwned;
         result['toolAutosellerOn'] = this.toolAutosellerOn;
         result['rigs'] = this.rigs;
+        result['pendingNewsEvents'] = this.pendingNewsEvents;
         return result;
     };
     AppComponent.prototype.LoadGameDataFromJSON = function (json) {
@@ -171,6 +181,7 @@ var AppComponent = (function () {
         for (var i = 0; i < json['rigs'].length; i++) {
             this.rigs.push(__WEBPACK_IMPORTED_MODULE_1__rig_class__["a" /* Rig */].FromJSON(json['rigs'][i]));
         }
+        this.pendingNewsEvents = json['pendingNewsEvents'];
     };
     AppComponent.prototype.SetHax = function () {
         // function for starting the game with extra stuff.  for testing during development only.
@@ -190,6 +201,10 @@ var AppComponent = (function () {
     AppComponent.prototype.PerSecondTick = function () {
         // keep track of time elapsed in the game
         this.totalTimeElapsedInSeconds++;
+        // make a news event happen every 60 seconds
+        if (this.totalTimeElapsedInSeconds % 60 == 0) {
+            this.ExecuteNewsEvent();
+        }
         // sell clickereum if autoseller is on
         if (this.toolAutosellerOn) {
             this.SellClickereumMax();
@@ -205,9 +220,8 @@ var AppComponent = (function () {
         // adjust market value via random fluctuations
         var fluctuationAmount = 1.15 + (Math.random() * 0.1 - 0.20);
         this.clickereumMarketValue = this.clickereumMarketValueBase * fluctuationAmount;
-        // autosave the game data every 10 seconds
-        if (this.totalTimeElapsedInSeconds % 10 == 0)
-            this.SaveData();
+        // autosave the game data
+        this.SaveData();
     };
     AppComponent.prototype.SellClickereum = function () {
         var amountSold = Math.max(0, Math.min(this.clickereumToSell, this.clickereum));
@@ -424,29 +438,35 @@ var AppComponent = (function () {
         return false;
     };
     AppComponent.prototype.SaveData = function () {
-        var cname = "cm_cookie";
-        var cvalue = JSON.stringify(this.GameDataToJSON());
-        var exdays = 3650;
-        var d = new Date();
-        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-        var expires = "expires=" + d.toUTCString();
-        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+        var gameDataStr = JSON.stringify(this.GameDataToJSON());
+        var myStorage = window.localStorage;
+        myStorage.setItem('gameData', gameDataStr);
     };
     AppComponent.prototype.LoadData = function () {
-        var name = "cm_cookie=";
-        var decodedCookie = decodeURIComponent(document.cookie);
-        var ca = decodedCookie.split(';');
-        for (var i = 0; i < ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) == ' ') {
-                c = c.substring(1);
-            }
-            if (c.indexOf(name) == 0) {
-                var cookieVal = c.substring(name.length, c.length);
-                this.LoadGameDataFromJSON(JSON.parse(cookieVal));
-                return;
-            }
+        var myStorage = window.localStorage;
+        var gameData = myStorage.getItem('gameData');
+        if (gameData != null && gameData.length > 0) {
+            this.LoadGameDataFromJSON(JSON.parse(gameData));
         }
+    };
+    AppComponent.prototype.RegeneratePendingNewsEvents = function () {
+        this.pendingNewsEvents = __WEBPACK_IMPORTED_MODULE_2__news_event__["a" /* NewsEvent */].GenerateNewsEvents();
+    };
+    AppComponent.prototype.ExecuteNewsEvent = function () {
+        if (!this.pendingNewsEvents || this.pendingNewsEvents.length == 0) {
+            this.RegeneratePendingNewsEvents();
+        }
+        // get the next news event
+        var newsEvent = this.pendingNewsEvents[0];
+        this.pendingNewsEvents.splice(0, 1);
+        this.clickereumMarketValueBase += newsEvent.impact;
+        if (newsEvent.impact > 0) {
+            this.toastr.success(newsEvent.description, "Clickereum value: " + (newsEvent.impact > 0 ? "+$" : "$") + newsEvent.impact, { timeOut: 10000 });
+        }
+        else {
+            this.toastr.warning(newsEvent.description, "Clickereum value: " + (newsEvent.impact > 0 ? "+$" : "$") + newsEvent.impact, { timeOut: 10000 });
+        }
+        console.log(newsEvent);
     };
     AppComponent.instance = null;
     AppComponent = AppComponent_1 = __decorate([
@@ -455,7 +475,7 @@ var AppComponent = (function () {
             template: __webpack_require__("../../../../../src/app/app.component.html"),
             styles: [__webpack_require__("../../../../../src/app/app.component.css")]
         }),
-        __metadata("design:paramtypes", [])
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_3_ngx_toastr__["b" /* ToastrService */]])
     ], AppComponent);
     return AppComponent;
     var AppComponent_1;
@@ -471,10 +491,12 @@ var AppComponent = (function () {
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AppModule; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__ = __webpack_require__("../../../platform-browser/esm5/platform-browser.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_forms__ = __webpack_require__("../../../forms/esm5/forms.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__minuteSeconds_pipe__ = __webpack_require__("../../../../../src/app/minuteSeconds.pipe.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__app_component__ = __webpack_require__("../../../../../src/app/app.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_platform_browser_animations__ = __webpack_require__("../../../platform-browser/esm5/animations.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_forms__ = __webpack_require__("../../../forms/esm5/forms.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__minuteSeconds_pipe__ = __webpack_require__("../../../../../src/app/minuteSeconds.pipe.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_ngx_toastr__ = __webpack_require__("../../../../ngx-toastr/toastr.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__app_component__ = __webpack_require__("../../../../../src/app/app.component.ts");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -486,21 +508,25 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 
 
 
+
+
 var AppModule = (function () {
     function AppModule() {
     }
     AppModule = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_2__angular_core__["E" /* NgModule */])({
+        Object(__WEBPACK_IMPORTED_MODULE_3__angular_core__["G" /* NgModule */])({
             declarations: [
-                __WEBPACK_IMPORTED_MODULE_4__app_component__["a" /* AppComponent */],
-                __WEBPACK_IMPORTED_MODULE_3__minuteSeconds_pipe__["a" /* MinuteSecondsPipe */]
+                __WEBPACK_IMPORTED_MODULE_6__app_component__["a" /* AppComponent */],
+                __WEBPACK_IMPORTED_MODULE_4__minuteSeconds_pipe__["a" /* MinuteSecondsPipe */]
             ],
             imports: [
                 __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__["a" /* BrowserModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_forms__["a" /* FormsModule */]
+                __WEBPACK_IMPORTED_MODULE_1__angular_platform_browser_animations__["a" /* BrowserAnimationsModule */],
+                __WEBPACK_IMPORTED_MODULE_2__angular_forms__["a" /* FormsModule */],
+                __WEBPACK_IMPORTED_MODULE_5_ngx_toastr__["a" /* ToastrModule */].forRoot(),
             ],
             providers: [],
-            bootstrap: [__WEBPACK_IMPORTED_MODULE_4__app_component__["a" /* AppComponent */]]
+            bootstrap: [__WEBPACK_IMPORTED_MODULE_6__app_component__["a" /* AppComponent */]]
         })
     ], AppModule);
     return AppModule;
@@ -565,11 +591,128 @@ var MinuteSecondsPipe = (function () {
         return minutes + ':' + (value - minutes * 60);
     };
     MinuteSecondsPipe = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["O" /* Pipe */])({
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Q" /* Pipe */])({
             name: 'minuteSeconds'
         })
     ], MinuteSecondsPipe);
     return MinuteSecondsPipe;
+}());
+
+
+
+/***/ }),
+
+/***/ "../../../../../src/app/news-event.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return NewsEvent; });
+var AllPossibleImpacts = [
+    0.025,
+    0.018,
+    0.067,
+    0.075,
+    0.036,
+    0.042,
+    0.038,
+    0.065,
+    0.022,
+    0.038,
+    0.025,
+    0.031,
+    0.072,
+    0.052,
+    0.045,
+    -0.025,
+    -0.018,
+    -0.067,
+    -0.075,
+    -0.036,
+    -0.042,
+    -0.038,
+    -0.065,
+    -0.022,
+    -0.038,
+    -0.025,
+    -0.031,
+    -0.072,
+    -0.052,
+    -0.045
+];
+var GoodNewsEvents = [
+    'Ron Paul endorses Clickereum',
+    'Canada adopts Clickereum as official currency',
+    'Hard fork avoided; contributors come to an agreement',
+    'Conan O\'Brien tells a Clickereum joke in his monologue',
+    'Rogue nation declares Clickereum as its official currency',
+    'PooForce press release announces sales up 1500 over estimates; credits Clickereum',
+    'Chuck E. Cheese replaces arcade tokens with Clickereum tokens',
+    'Foo Fighters announce new album only available to pre-order with Clickereum payments',
+    'Akira Toriyama mentions Clickereum in new Dragon Ball manga',
+    'Nathan Fielder convinces L.A. supermarket to switch to Clickereum-only payments',
+    'Bill Gates reveals that his only regret with Microsoft is "not developing a hip cryptocurrency like Clickereum"',
+    'George Lucas releases new Star Wars remasters; Clickereum revealed to be primary currency in galaxy far, far away',
+    'Reddit puts all cat memes beyond Clickereum paywall',
+    'Typo leads Ethereum newsletter subscribers to Clickereum website',
+    'Google Play begins accepting Clickereum payments',
+    'President starts Twitter war with Clickereum developers'
+];
+var BadNewsEvents = [
+    'Clickereum bank robbed',
+    'Google Play stops accepting Clickereum payments',
+    'Apple stops accepting Clickeruem payments',
+    'Clickereum stops being cool at my school, and the other kids make fun of me for using it',
+];
+function shuffle(a) {
+    for (var i = a.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        _a = [a[j], a[i]], a[i] = _a[0], a[j] = _a[1];
+    }
+    var _a;
+}
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+function getGoodDescription() {
+    var i = getRandomInt(0, BadNewsEvents.length);
+    return GoodNewsEvents[i];
+}
+function getBadDescription() {
+    var i = getRandomInt(0, BadNewsEvents.length);
+    return BadNewsEvents[i];
+}
+function impactsAreSafe(impacts) {
+    var currentPrice = 0.1;
+    for (var i = 0; i < impacts.length; i++) {
+        currentPrice += impacts[i];
+        if (currentPrice < 0) {
+            return false;
+        }
+    }
+    return true;
+}
+var NewsEvent = (function () {
+    function NewsEvent(impact, description) {
+        this.impact = 0;
+        this.description = '';
+        this.impact = impact;
+        this.description = description;
+    }
+    NewsEvent.GenerateNewsEvents = function () {
+        var result = [];
+        var impacts = AllPossibleImpacts.slice(0);
+        shuffle(impacts);
+        while (!impactsAreSafe(impacts)) {
+            shuffle(impacts);
+        }
+        for (var i = 0; i < impacts.length; i++) {
+            var impact = impacts[i];
+            var description = (impact > 0 ? getGoodDescription() : getBadDescription());
+            result.push(new NewsEvent(impact, description));
+        }
+        return result;
+    };
+    return NewsEvent;
 }());
 
 
@@ -687,7 +830,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 if (__WEBPACK_IMPORTED_MODULE_3__environments_environment__["a" /* environment */].production) {
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_7" /* enableProdMode */])();
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_9" /* enableProdMode */])();
 }
 Object(__WEBPACK_IMPORTED_MODULE_1__angular_platform_browser_dynamic__["a" /* platformBrowserDynamic */])().bootstrapModule(__WEBPACK_IMPORTED_MODULE_2__app_app_module__["a" /* AppModule */])
     .catch(function (err) { return console.log(err); });
